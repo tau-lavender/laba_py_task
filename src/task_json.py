@@ -13,13 +13,11 @@ def parse_json_file(line: str, path: str, line_no: int) -> dict[str, Any]:
     """
 
     try:
+        print(line)
+        print(json.loads(line))
         return json.loads(line)
     except json.JSONDecodeError as error:
         raise ValueError(f"bad JSON at {path}:{line_no}: {error}") from error
-
-
-class BrokenJSONError(Exception):
-    pass
 
 
 class TaskSourceJSON:

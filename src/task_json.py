@@ -1,39 +1,32 @@
-from src.task import Task
 import json
+from typing import Any, Iterable
+from src.task import Task
+
+
+def parse_json_file(line: str, path: str, line_no: int) -> dict[str, Any]:
+    try:
+        return json.loads(line)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"bad JSON at {path}:{line_no}: {error}") from error
 
 
 class BrokenJSONError(Exception):
     pass
 
 
-class PrintPayload:
-    def __init__(self, msg: str) -> None:
-        self.msg = msg
-
-    def do_smth(self) -> None:
-        print(self.msg)
-
-
 class TaskSourceJSON:
     def __init__(self, filename: str) -> None:
-        if not filename.endswith(".json"):
+        if not filename.endswith(".jsonl"):
             raise NameError(f"{filename} is not json")
         self.filename = filename
 
-    def get_tasks(self) -> list[Task]:
+    def get_tasks(self) -> Iterable[Task]:
         with open(self.filename, "r", encoding="utf-8") as f:
-            task_list: list[Task] = []
-            json_string = f.read()
-            raw: dict = json.loads(json_string)
-            if not isinstance(raw, dict):
-                raise BrokenJSONError(f"in {self.filename} no task dict")
-            for task_id in raw:
-                try:
-                    task_id_int = int(task_id)
-                except ValueError:
-                    raise BrokenJSONError(f"in {self.filename} id {task_id} not int")
-                msg = raw[task_id]
-                if not isinstance(msg, str):
-                    raise BrokenJSONError(f"in {self.filename} payload not string")
-                task_list.append(Task(task_id_int, PrintPayload(msg)))
-            return task_list
+            for line_no, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+                raw = parse_json_file(line, self.filename, line_no)
+                task_id = str(raw.get("id", f"{self.filename}:{line_no}"))
+                payload = raw.get("payload", "")
+                yield Task(task_id, payload)

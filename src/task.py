@@ -1,21 +1,8 @@
 from dataclasses import dataclass
-from typing import Protocol, runtime_checkable
 
 
-@runtime_checkable
-class Payload(Protocol):
-    def do_smth(self) -> None:
-        ...
-
-
-@dataclass
+@dataclass(frozen=True, slots=True)
 class Task:
     """Task data"""
-    id: int
-    payload: Payload
-
-
-@runtime_checkable
-class TaskSource(Protocol):
-    def get_tasks(self) -> list[Task]:
-        ...
+    task_id: str
+    payload: object

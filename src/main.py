@@ -6,7 +6,8 @@ from src.task_api import TaskSourceAPI
 
 def main() -> None:
     """
-    Обязательнная составляющая программ, которые сдаются. Является точкой входа в приложение
+    Функция вызывает источники задач через единный контракт
+    для добавления новых необходимо импортировать их и добавить в source_list
     :return: Данная функция ничего не возвращает
     """
     source_list: list[TaskSource] = [TaskSourceJSON("example.jsonl"), TaskSourceGen(), TaskSourceAPI()]

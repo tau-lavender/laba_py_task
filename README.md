@@ -32,3 +32,6 @@ python -m src.main
 
 ### TaskSourceAPI
 Источник задач, генерирующий задачи с задержкой по времени
+
+## Покрытие
+![](https://github.com/tau-lavender/laba_py_task/blob/main/img/cov.png)
